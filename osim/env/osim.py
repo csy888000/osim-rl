@@ -262,13 +262,13 @@ class Spec(object):
         self.timestep_limit = 300
 
 ## OpenAI interface
-# The amin purpose of this class is to provide wrap all 
+# The main purpose of this class is to provide wrap all
 # the functions of OpenAI gym. It is still an abstract
 # class but closer to OpenSim. The actual classes of
 # environments inherit from this one and:
 # - select the model file
 # - define the rewards and stopping conditions
-# - define an obsernvation as a function of state
+# - define an observation as a function of state
 class OsimEnv(gym.Env):
     action_space = None
     observation_space = None
@@ -324,7 +324,7 @@ class OsimEnv(gym.Env):
         return self.prev_state_desc
 
     def get_observation(self):
-        # This one will normally be overwrtitten by the environments
+        # This one will normally be overwritten by the environments
         # In particular, for the gym we want a vector and not a dictionary
         return self.osim_model.get_state_desc()
 
