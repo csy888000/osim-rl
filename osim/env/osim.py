@@ -124,7 +124,7 @@ class OsimModel(object):
 
         res = {}
 
-        ## Joints
+        ## Joints (Angle/Position x/Position y)
         res["joint_pos"] = {}
         res["joint_vel"] = {}
         res["joint_acc"] = {}
@@ -289,6 +289,7 @@ class OsimEnv(gym.Env):
         'video.frames_per_second' : None
     }
 
+
     def reward(self):
         raise NotImplementedError
 
@@ -316,6 +317,10 @@ class OsimEnv(gym.Env):
         
         self.action_space = convert_to_gym(self.action_space)
         self.observation_space = convert_to_gym(self.observation_space)
+
+    def list_elements(self):
+        return self.osim_model.list_elements()
+
 
     def get_state_desc(self):
         return self.osim_model.get_state_desc()
@@ -362,7 +367,7 @@ class L2RunEnv(OsimEnv):
 
     def is_done(self):
         state_desc = self.get_state_desc()
-        return state_desc["body_pos"]["pelvis"][1] < 0.6
+        return state_desc["body_pos"]["pelvis"][1] < 0.6 # 0.6
 
     ## Values in the observation vector
     def get_observation(self):
