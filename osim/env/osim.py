@@ -362,7 +362,7 @@ class OsimEnv(gym.Env):
         return
 
 class L2RunEnv(OsimEnv):
-    model_path = os.path.join(os.path.dirname(__file__), '../models/gait9dof18musc.osim')    
+    model_path = os.path.join(os.path.dirname(__file__), '../models/gait9dof18musc - Copy.osim')
     time_limit = 1000
 
     def is_done(self):

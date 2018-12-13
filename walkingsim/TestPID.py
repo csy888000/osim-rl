@@ -22,10 +22,11 @@ def TestPID(P, I, D):
         IncrementalXaxis.append(i)
 
         # Positional
-        PositionalPid.SetStepSignal(100.2)
+        PID_out = PositionalPid.SetStepSignal(100.2)
         PositionalPid.SetInertiaTime(3, 0.1)
         PositionalYaxis.append(PositionalPid.SystemOutput)
         PositionalXaxis.append(i)
+        print(PID_out)
 
     plt.figure(1)  # fig 1
     plt.plot(IncrementalXaxis, IncrementalYaxis, 'r')
@@ -43,13 +44,12 @@ def TestPID(P, I, D):
 
 
 def PID_run(subject, goalState, currentState):
-    # IncrementalPid = PID.IncrementalPID(4, 0.5, 0.1)
-    PID_out = subject.SetStepSignal(goalState)
     subject.SystemOutput = currentState
+    PID_out, Error_out = subject.SetStepSignal(goalState)
     subject.LastSystemOutput = subject.SystemOutput
     # PID.IncrementalYaxis.append(PID.IncrementalPID.SystemOutput)
     # PID.IncrementalXaxis.append(num_step)
-    return PID_out
+    return PID_out, Error_out
 
 
 if __name__ == "__main__":

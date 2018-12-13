@@ -22,10 +22,11 @@ class IncrementalPID:
         self.Error = StepSignal - self.SystemOutput
         IncrementValue = self.Kp * (self.Error - self.LastError) + self.Ki * self.Error + self.Kd * (
                     self.Error - 2 * self.LastError + self.LastLastError)
+        # IncrementValue = self.Kp * (self.Error) + self.Kd * (self.Error - self.LastError)
         self.PIDOutput += IncrementValue
         self.LastLastError = self.LastError
         self.LastError = self.Error
-        return self.PIDOutput
+        return IncrementValue, self.Error, self.PIDOutput
 
     # 设置一阶惯性环节系统  其中InertiaTime为惯性时间常数
     def SetInertiaTime(self, InertiaTime, SampleTime):
@@ -62,6 +63,7 @@ class PositionalPID:
         self.PidOutput = KpWork + KiWork + KdWork
         self.PIDErrADD += Err
         self.ErrBack = Err
+        return self.PidOutput, self.ErrBack
 
 
 
