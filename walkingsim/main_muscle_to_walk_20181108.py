@@ -1,7 +1,7 @@
 from osim.env import L2RunEnv
 
 from numpy import *
-from walkingsim import readExcel, draw_one_data, draw_8_activation, PID, TestPID
+from walkingsim import readExcel, draw_data_one, draw_activation_8, PID, TestPID
 import matplotlib.pyplot as plt
 
 # Read muscle activation data
@@ -27,8 +27,10 @@ env.list_elements()
 observation = env.reset()
 
 numStep = 201*roundNum
-show_fig_one = True
-show_fig_eight = False
+
+# show figures?
+show_fig_one = False
+show_fig_eight = True
 
 for subNum in range(6):
     locals()['WalkPid' + str(subNum)] = PID.PositionalPID(5, 0, 1)  # (45, 0.7, 580) (20, 0.5, 100)
@@ -44,13 +46,13 @@ IncrementalYaxis = [0]
 
 
 range_of_y_axis = [-90, 90]
-draw_one_data.set_one_figure(numStep, show_fig_one, range_of_y_axis)
+draw_data_one.set_figure_one(numStep, show_fig_one, range_of_y_axis)
 # draw_8 muscle activations
 if show_fig_eight:
-    subfigure_list = draw_8_activation.set_8_figure(numStep, show_fig_eight)
+    subfigure_list = draw_activation_8.set_8_figure(numStep, show_fig_eight)
     line_name = []
     for num_line in range(len(subfigure_list)):
-        locals()['line_fig_' + str(num_line)] = draw_8_activation.DrawLine(subfigure_list[num_line])
+        locals()['line_fig_' + str(num_line)] = draw_activation_8.DrawLine(subfigure_list[num_line])
         line_name.append(locals()['line_fig_' + str(num_line)])
 
 else:
@@ -70,10 +72,10 @@ for i in range(numStep):
     # if i > 20:
     #     hip_retract = 1
     #     muscleActivation = array([0, 0, 0, 1, 0, 0, 0, 0, 0,
-    #                           0, actArray[i][4], 0, 0, 0, actArray[i][3], actArray[i][2], 0, actArray[i][1]])
+    #                           0, actArray_ref[i][4], 0, 0, 0, actArray_ref[i][3], actArray_ref[i][2], 0, actArray_ref[i][1]])
     # else:
-    #     muscleActivation = array([0, actArray[i][8], 0, 0, 0, actArray[i][7], actArray[i][6], 0, actArray[i][5],
-    #                           0, actArray[i][4], 0, 0, 0, actArray[i][3], actArray[i][2], 0, actArray[i][1]])
+    #     muscleActivation = array([0, actArray_ref[i][8], 0, 0, 0, actArray_ref[i][7], actArray_ref[i][6], 0, actArray_ref[i][5],
+    #                           0, actArray_ref[i][4], 0, 0, 0, actArray_ref[i][3], actArray_ref[i][2], 0, actArray_ref[i][1]])
 
     # print(observation)
 
@@ -164,7 +166,9 @@ for i in range(numStep):
     muscleActivation = array([0, act_out[7], 0, 0, 0, 0, 0, 0, 0,
                               0, 0, 0, 0, 0, 0, 0, 0, 0])
     observation, reward, done, info = env.step(muscleActivation)
-
+    current_ = observation
+    observation_ = array(current_)
+    print(current_)
     # print(pelvis_tilt)
 
     # print('\n')
@@ -172,12 +176,12 @@ for i in range(numStep):
     # print(env.get_observation())
     # print(env.reward())
     if show_fig_one:
-        draw_one_data.draw_two(i, currentState[1], targetState[1])
+        draw_data_one.draw_two(i, currentState[1], targetState[1])
         # print(currentState[1])
         # draw_one_data.draw_one(i, env.get_state_desc()["forces"]["bifemsh_r"])
 
     if show_fig_eight:
-        draw_8_activation.draw_8(i, actArray[i, 1:9], subfigure_list, line_name)
+        draw_activation_8.draw_8(i, actArray[i, 1:9], subfigure_list, line_name)
 
 
 

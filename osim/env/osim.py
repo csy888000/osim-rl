@@ -312,7 +312,7 @@ class OsimEnv(gym.Env):
         self.spec.timestep_limit = self.time_limit
 
         self.action_space = ( [0.0] * self.osim_model.get_action_space_size(), [1.0] * self.osim_model.get_action_space_size() )
-#        self.observation_space = ( [-math.pi*100] * self.get_observation_space_size(), [math.pi*100] * self.get_observation_space_s
+        # self.observation_space = ( [-math.pi*100] * self.get_observation_space_size(), [math.pi*100] * self.get_observation_space_s
         self.observation_space = ( [0] * self.get_observation_space_size(), [0] * self.get_observation_space_size() )
         
         self.action_space = convert_to_gym(self.action_space)
@@ -355,8 +355,8 @@ class OsimEnv(gym.Env):
             obs = self.get_observation()
         else:
             obs = self.get_state_desc()
-            
-        return [ obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {} ]
+
+        return [obs, self.reward(), self.is_done() or (self.osim_model.istep >= self.spec.timestep_limit), {}]
 
     def render(self, mode='human', close=False):
         return
@@ -372,7 +372,7 @@ class L2RunEnv(OsimEnv):
     ## Values in the observation vector
     def get_observation(self):
         state_desc = self.get_state_desc()
-
+        # print(state_desc)
         # Augmented environment from the L2R challenge
         res = []
         pelvis = None
@@ -402,6 +402,59 @@ class L2RunEnv(OsimEnv):
         if not prev_state_desc:
             return 0
         return state_desc["joint_pos"]["ground_pelvis"][1] - prev_state_desc["joint_pos"]["ground_pelvis"][1]
+
+
+class OneJoint(OsimEnv):
+    model_path = os.path.join(os.path.dirname(__file__), '../models/gait9dof18musc - Copy.osim')
+    time_limit = 1000
+
+    def is_done(self):
+        state_desc = self.get_state_desc()
+        self.istep += 1
+        # print(self.istep)
+        is_done = abs(-30 - state_desc["joint_pos"]["knee_r"][0] * 180 / 3.1415) > 5\
+            # and abs(state_desc["joint_vel"]["knee_r"][0] * 180 / 3.1415) > 5
+        if is_done:
+            self.istep = 0
+        return is_done
+
+    ## Values in the observation vector
+    def get_observation(self):
+        state_desc = self.get_state_desc()
+        # print(state_desc)
+        # Augmented environment from the L2R challenge
+        res = []
+        pelvis = None
+
+        '''
+        observation:
+        0-5 hip_r .. ankle_l [joint angles] 6 ground_pelvis # 1->knee_r, 4->knee_l
+        7-12 hip_r .. ankle_l [joint velocity] 13 ground_pelvis
+        '''
+
+        for joint in ["hip_r", "knee_r", "ankle_r", "hip_l", "knee_l", "ankle_l", ]:
+            res += state_desc["joint_pos"][joint]
+            # res += state_desc["joint_vel"][joint]
+        res += [state_desc["joint_pos"]["ground_pelvis"][0]]
+
+        for joint in ["hip_r", "knee_r", "ankle_r", "hip_l", "knee_l", "ankle_l", ]:
+            res += state_desc["joint_vel"][joint]
+        res += [state_desc["joint_vel"]["ground_pelvis"][0]]
+
+        # res = res + state_desc["misc"]["mass_center_pos"] + state_desc["misc"]["mass_center_vel"]
+
+        return res
+
+    def get_observation_space_size(self):
+        return 41
+
+    def reward(self):
+        state_desc = self.get_state_desc()
+        prev_state_desc = self.get_prev_state_desc()
+        if not prev_state_desc:
+            return 0
+        return state_desc["joint_pos"]["ground_pelvis"][1] - prev_state_desc["joint_pos"]["ground_pelvis"][1]
+
 
 def rect(row):
     r = row[0]

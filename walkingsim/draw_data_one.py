@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from math import *
 
 
-def set_one_figure(num_step, show_data=True, rangeyaxis=[-1, 1]):
+def set_figure_one(num_step, show_data=True, rangeyaxis=[-1, 1]):
     range_low = rangeyaxis[0]
     range_high = rangeyaxis[1]
     if show_data:
@@ -17,7 +17,8 @@ def set_one_figure(num_step, show_data=True, rangeyaxis=[-1, 1]):
         plt.ylabel('Y')
         plt.axis([0, num_step, range_low, range_high])
 
-def set_two_figure(num_step, show_data=True, rangeyaxis=[-1, 1]):
+
+def set_figure_two(num_step, show_data=True, rangeyaxis=[-1, 1]):
     range_low = rangeyaxis[0]
     range_high = rangeyaxis[1]
     if show_data:
