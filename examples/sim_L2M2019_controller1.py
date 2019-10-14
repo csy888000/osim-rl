@@ -26,9 +26,9 @@ INIT_POSE = np.array([
     -1.745329251994329478e-01]) # ankle flex
 
 if mode is '2D':
-    params = np.loadtxt('./osim/control/params_2D.txt')
+    params = np.loadtxt('./control/params_2D.txt')
 elif mode is '3D':
-    params = np.loadtxt('./osim/control/params_3D_init.txt')
+    params = np.loadtxt('./control/params_3D_init.txt')
 
 locoCtrl = OsimReflexCtrl(mode=mode, dt=sim_dt)
 env = L2M2019Env(visualize=visualize, seed=seed, difficulty=difficulty)
